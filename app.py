@@ -77,7 +77,7 @@ def add_expense():
         return redirect(url_for('login_page'))
         
     amount = float(request.form['amount'])
-    category = request.form['category']
+    category = request.form['category'].replace(' ', '')
     description = request.form['description']
     
     # Pass the logged-in user's name to the manager
