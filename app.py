@@ -77,8 +77,11 @@ def add_expense():
         return redirect(url_for('login_page'))
         
     amount = float(request.form['amount'])
-    category = request.form['category'].replace(' ', '')
+    category = request.form['category']
     description = request.form['description']
+
+    # Removes leading and trailing whitespaces from category 
+    category = category.strip()
     
     # Pass the logged-in user's name to the manager
     finance_manager.add_expense(amount, category, description, session['username'])

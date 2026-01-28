@@ -40,7 +40,6 @@ class FinanceManager:
     def load_data(self):
         if not os.path.exists(self.filename):
             return # File doesn't exist yet, nothing to load 
-
         try: 
             with open(self.filename, "r") as f:
                 raw_data = json.load(f) 

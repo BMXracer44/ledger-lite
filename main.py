@@ -1,4 +1,4 @@
-from manager import FinanceManager 
+from manager import FinanceManager
 
 def print_menu():
     print("\n--- LedgerLite Finance Tracker ---")
@@ -10,7 +10,8 @@ def print_menu():
 def main():
     manager = FinanceManager() 
 
-    while True: 
+    while True:
+        manager.load_data 
         print_menu()
         choice = input("Select an option (1-4): ")
 
