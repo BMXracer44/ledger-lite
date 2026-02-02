@@ -65,44 +65,50 @@ class FinanceManager:
             json.dump(data_to_save, f, indent=4)
 
     def load_data(self):
+        # 1. Safety Check: If file doesn't exist, stop.
         if not os.path.exists(self.filename):
-            return # File doesn't exist yet, nothing to load 
-        try: 
+            return 
+
+        try:
             with open(self.filename, "r") as f:
-                raw_data = json.load(f) 
-                # Convert the loaded dictionaries back into Expense objects 
-                self.expenses = [
-                    Expense(item['amount'], item['category'], item['description'], item['date'])
-                    for item in raw_data 
-                ]
-                self.paychecks = [
-                    Income(item['amount'], item['job'], item['description'], item['date'])
-                    for item in raw_data 
-                ]
-        except(json.JSONDecodeError, KeyError):
+                raw_data = json.load(f)
+                
+                # Reset lists to be empty before filling them
+                self.expenses = []
+                self.paychecks = []
+
+                # 2. The Sorting Loop
+                for item in raw_data:
+                    # We use .get() to avoid crashing if a key is missing
+                    # "admin" is the default if 'owner' didn't exist in old data
+                    owner = item.get('owner', 'admin') 
+                    
+                    # LOGIC: How do we tell them apart?
+                    # Expenses have a 'category'. Income has 'job' (or whatever you named it).
+                    
+                    if 'category' in item:
+                        # It has a category, so it MUST be an Expense
+                        obj = Expense(
+                            amount=item['amount'],
+                            category=item['category'],
+                            description=item['description'],
+                            owner=owner,
+                            date=item['date']
+                        )
+                        self.expenses.append(obj)
+                        
+                    elif 'job' in item:
+                        # It has a job, so it MUST be Income
+                        obj = Income(
+                            amount=item['amount'],
+                            job=item['job'],
+                            description=item['description'],
+                            owner=owner,
+                            date=item['date']
+                        )
+                        self.paychecks.append(obj)
+
+        except (json.JSONDecodeError, KeyError):
             print("Warning: Data file corrupted or empty. Starting fresh.")
             self.expenses = []
-            self.paychecks = []
-
-        self.expenses = [
-            Expense(
-                item['amount'],
-                item['category'],
-                item['description'],
-                item.get('owner', 'admin'),
-                item['date']
-            )
-            for item in raw_data
-        ]
-        
-        #self.paychecks = [
-        #    Income(
-        #       item['amount'],
-        #       item['job'],
-        #       item['description'],
-        #       item.get('owner', 'admin'),
-        #       item['date']
-        #   )
-        #   for item in raw_data
-        #]
-
+            self.paychecks = [] 
