@@ -19,21 +19,30 @@ def home():
     
     # FILTER: Only get expenses for THIS user
     user_expenses = finance_manager.get_user_expenses(current_user)
+    user_paychecks = finance_manager.get_user_paychecks(current_user)
     
     # Calculate total for THIS user only
-    total = sum(e.amount for e in user_expenses)
+    expenseTotal = sum(e.amount for e in user_expenses)
+    incomeTotal = sum(i.amount for i in user_paychecks)
     
     # Prepare chart data for THIS user
-    report = {}
+    expenseReport = {}
     for e in user_expenses:
-        report[e.category] = report.get(e.category, 0) + e.amount
+        expenseReport[e.category] = expenseReport.get(e.category, 0) + e.amount
         
+    incomeReport = {}
+    for i in user_paychecks:
+        incomeReport[i.job] = incomeReport.get(i.job, 0) + i.amount 
+
     return render_template(
         'index.html', 
         expenses=user_expenses, 
-        total=total,
-        chart_labels=list(report.keys()),
-        chart_values=list(report.values()),
+        expenseTotal = expenseTotal,
+        incomeTotal=incomeTotal,
+        expense_chart_labels=list(expenseReport.keys()),
+        expense_chart_values=list(expenseReport.values()),
+        income_chart_labels=list(incomeReport.keys()),
+        income_chart_values=list(incomeReport.values()),
         username=current_user # Pass username to display "Welcome, Bob!"
     )
 
