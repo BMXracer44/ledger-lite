@@ -36,7 +36,8 @@ def home():
 
     return render_template(
         'index.html', 
-        expenses=user_expenses, 
+        expenses=user_expenses,
+        paychecks=user_paychecks,
         expenseTotal = expenseTotal,
         incomeTotal=incomeTotal,
         expense_chart_labels=list(expenseReport.keys()),

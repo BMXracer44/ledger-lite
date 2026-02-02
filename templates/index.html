@@ -135,10 +135,10 @@
             <tbody>
               {% for income in paychecks %}
               <tr>
-                <td>{{ paycheck.date }}</td>
-                <td><span class="badge bg-secondary">{{ paycheck.job }}</span></td>
-                <td>{{ paycheck.description }}</td>
-                <td class="text-end fw-bold">${{ "%.2f"|format(paycheck.amount) }}</td>
+                <td>{{ income.date }}</td>
+                <td><span class="badge bg-secondary">{{ income.job }}</span></td>
+                <td>{{ income.description }}</td>
+                <td class="text-end fw-bold">${{ "%.2f"|format(income.amount) }}</td>
               </tr>
               {% endfor %}
             </tbody>
