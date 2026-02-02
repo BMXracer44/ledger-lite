@@ -88,5 +88,22 @@ def add_expense():
     
     return redirect(url_for('home'))
 
+@app.route('/add', methods=['POST'])
+def add_income():
+    if 'username' not in session:
+        return redirect(url_for('login_page'))
+        
+    amount = float(request.form['amount'])
+    job = request.form['job']
+    description = request.form['description']
+
+    # Removes leading and trailing whitespaces from category 
+    job = job.strip()
+    
+    # Pass the logged-in user's name to the manager
+    finance_manager.add_income(amount, job, description, session['username'])
+    
+    return redirect(url_for('home'))
+
 if __name__ == '__main__':
     app.run(debug=True)
