@@ -80,7 +80,7 @@ def logout():
     session.pop('username', None) # Clear the session
     return redirect(url_for('login_page'))
 
-@app.route('/add', methods=['POST'])
+@app.route('/addExpense', methods=['POST'])
 def add_expense():
     if 'username' not in session:
         return redirect(url_for('login_page'))
@@ -97,7 +97,7 @@ def add_expense():
     
     return redirect(url_for('home'))
 
-@app.route('/add', methods=['POST'])
+@app.route('/addIncome', methods=['POST'])
 def add_income():
     if 'username' not in session:
         return redirect(url_for('login_page'))
