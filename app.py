@@ -19,21 +19,31 @@ def home():
     
     # FILTER: Only get expenses for THIS user
     user_expenses = finance_manager.get_user_expenses(current_user)
+    user_paychecks = finance_manager.get_user_paychecks(current_user)
     
     # Calculate total for THIS user only
-    total = sum(e.amount for e in user_expenses)
+    expenseTotal = sum(e.amount for e in user_expenses)
+    incomeTotal = sum(i.amount for i in user_paychecks)
     
     # Prepare chart data for THIS user
-    report = {}
+    expenseReport = {}
     for e in user_expenses:
-        report[e.category] = report.get(e.category, 0) + e.amount
+        expenseReport[e.category] = expenseReport.get(e.category, 0) + e.amount
         
+    incomeReport = {}
+    for i in user_paychecks:
+        incomeReport[i.job] = incomeReport.get(i.job, 0) + i.amount 
+
     return render_template(
         'index.html', 
-        expenses=user_expenses, 
-        total=total,
-        chart_labels=list(report.keys()),
-        chart_values=list(report.values()),
+        expenses=user_expenses,
+        paychecks=user_paychecks,
+        expenseTotal = expenseTotal,
+        incomeTotal=incomeTotal,
+        expense_chart_labels=list(expenseReport.keys()),
+        expense_chart_values=list(expenseReport.values()),
+        income_chart_labels=list(incomeReport.keys()),
+        income_chart_values=list(incomeReport.values()),
         username=current_user # Pass username to display "Welcome, Bob!"
     )
 
@@ -71,7 +81,7 @@ def logout():
     session.pop('username', None) # Clear the session
     return redirect(url_for('login_page'))
 
-@app.route('/add', methods=['POST'])
+@app.route('/addExpense', methods=['POST'])
 def add_expense():
     if 'username' not in session:
         return redirect(url_for('login_page'))
@@ -85,6 +95,23 @@ def add_expense():
     
     # Pass the logged-in user's name to the manager
     finance_manager.add_expense(amount, category, description, session['username'])
+    
+    return redirect(url_for('home'))
+
+@app.route('/addIncome', methods=['POST'])
+def add_income():
+    if 'username' not in session:
+        return redirect(url_for('login_page'))
+        
+    amount = float(request.form['amount'])
+    job = request.form['job']
+    description = request.form['description']
+
+    # Removes leading and trailing whitespaces from category 
+    job = job.strip()
+    
+    # Pass the logged-in user's name to the manager
+    finance_manager.add_income(amount, job, description, session['username'])
     
     return redirect(url_for('home'))
 
