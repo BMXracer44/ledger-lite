@@ -156,15 +156,16 @@
     const itx = document.getElementById('incomeChart');
     // 2. Safely transfer data from Python (Backend) to JavaScript (frontend)
     // The |tojson filter converts Python lists ['A', 'B'] into JS arrays ["A", "B"]
-    const labels = {{chart_labels | tojson }};
-    const expenseData = {{chart_values | tojson }};
-    const incomeData = {{chart_values | tojson }};
+    const expenseLabels = {{expense_chart_labels | tojson }};
+    const expenseData = {{expense_chart_values | tojson }};
+    const incomeLabels = {{income_chart_labels | tojson }};
+    const incomeData = {{income_chart_values | tojson }};
 
     if (ctx) {
       new Chart(ctx, {
         type: 'doughnut', //Can change to 'bar' or 'pie'
         data: {
-          labels: labels,
+          labels: expenseLabels,
           datasets: [{
             label: 'Amount Spent ($)',
             data: expenseData,
@@ -185,7 +186,7 @@
       new Chart(itx, {
         type: 'doughnut', //Can change to 'bar' or 'pie'
         data: {
-          labels: labels,
+          labels: incomeLabels,
           datasets: [{
             label: 'Amount Earned ($)',
             data: incomeData,
