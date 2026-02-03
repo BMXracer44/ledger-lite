@@ -19,6 +19,31 @@
             <h1 class="display-4">LedgerLite 💰</h1>
             <p>Welcome, <strong>{{ username }}</strong>!</p>
             <a href="/logout" class="btn btn-outline-danger btn-sm mb-3">Logout</a>
+            <h3 class="text-success">Total Networth: ${{ "%.2f"|format(incomeTotal - expenseTotal) }}</h3>
+          </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+          <div class="card-header">Networth Breakdown</div>
+          <div class="card-body">
+            <div style="height: 300px; width: 100%;">
+              <canvas id="networthChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+        <div class="card shadow-sm mb-4">
+          <div class="card-body text-center">
+            <h1 class="display-4">Expenses 💰</h1>
             <h3 class="text-success">Total Spent: ${{ "%.2f"|format(expenseTotal) }}</h3>
           </div>
         </div>
@@ -151,15 +176,25 @@
 
 
   <script>
+    const _ = require("lodash");
     // 1. Grabs the context of the canvas element we created above
     const ctx = document.getElementById('expenseChart');
     const itx = document.getElementById('incomeChart');
+    const ntx = document.getElementById('networthChart');
     // 2. Safely transfer data from Python (Backend) to JavaScript (frontend)
     // The |tojson filter converts Python lists ['A', 'B'] into JS arrays ["A", "B"]
     const expenseLabels = {{expense_chart_labels | tojson }};
     const expenseData = {{expense_chart_values | tojson }};
     const incomeLabels = {{income_chart_labels | tojson }};
     const incomeData = {{income_chart_values | tojson }};
+    const networthLabels = ["Expenses", "Income"];
+    let expenseTotal = _.sum(expenseData);
+    let incomeTotal = _.sum(incomeData);
+    console.log(expenseTotal);
+    console.log(incomeTotal);
+    console.log(expenseData);
+    console.log(incomeData);
+
 
     if (ctx) {
       new Chart(ctx, {
@@ -202,6 +237,28 @@
         }
       });
     }
+
+    if (ntx) {
+      new Chart(itx, {
+        type: 'doughnut', //Can change to 'bar' or 'pie'
+        data: {
+          labels: networthLabels,
+          datasets: [{
+            label: 'Total ($)',
+            data: networthData,
+            backgroundColor: [
+              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    }
+
 
   </script>
 
